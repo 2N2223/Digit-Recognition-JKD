@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>手写数字识别</title>
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0/dist/tf.min.js"></script>
   <script>
-    var loadmodel = (async function() {  // 由于不便使用我在本地使用Keras训练的模型，这里使用了GitHub上一个开源的模型
-      // window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/chench53/digits-recognition-tfjs/master/server/models/mnist/model.json');
-      window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/jsmodel/model.json');
+    var loadmodel = (async function() {  // 模型已上传至Github
+      window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/JS_model/model.json');
       console.log('model loaded')
       return loadmodel;
     })
@@ -122,7 +121,7 @@
           img.push(drawBoard[3 + i * 44800 + j * 80]);
         }
       }
-      var image_num = tf.tensor(img, [1, 28, 28]);
+      var image_num = tf.tensor(img, [1, 28, 28, 1]);
       var result = predict(image_num, "AI给出的结果是：").then();
     })
   </script>
