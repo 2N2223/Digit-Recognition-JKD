@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0/dist/tf.min.js"></script>
   <script>
     var loadmodel = (async function() {  // 模型已上传至Github
-      window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/JS_model/model.json');
+      window.loadmodel = await tf.loadLayersModel('https://github.com/2N2223/Digit-Recognition-JKD/raw/main/Python/JS_model/model.json');
       console.log('model loaded')
       return loadmodel;
     })
