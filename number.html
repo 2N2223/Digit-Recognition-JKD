@@ -8,8 +8,9 @@
   <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0/dist/tf.min.js"></script>
   <script>
-    var loadmodel = (async function() {  // 模型已上传至Github
-      window.loadmodel = await tf.loadLayersModel('https://github.com/2N2223/Digit-Recognition-JKD/raw/main/Python/JS_model/model.json');
+    var loadmodel = (async function() {
+      // window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/Python/JS_model/model.json');
+      window.loadmodel = await tf.loadLayersModel('https://teacher.solid.things.ac.cn:7243/private/exp/web/2021k8009907042/code/Web/Python/JS_model/model.json');
       console.log('model loaded')
       return loadmodel;
     })
@@ -28,7 +29,12 @@
       }
       var result = resultArr.indexOf(max);
       console.log(result);
-      alert(text + result);
+      if(max >= 0.8) {
+        alert(text + result);
+      }
+      else {
+        alert("AI也不知道这是什么数字");
+      }
     })
     predict().then()
   </script>
@@ -55,7 +61,7 @@
   <div id="board">
     <h1>手写数字识别</h1>
     <h1>由2N2223创建</h1>
-    <canvas id="myCanvas" width="560px"  height="560px" ></canvas>
+    <canvas id="myCanvas" width="560px" height="560px" disable-scroll="false"></canvas>
     <p><button id="remove">清空画板</button></p>
     <P><button id="recognize">识别</button></P>
   </div>
@@ -65,44 +71,93 @@
     var curColor = "black";
     var isDown = false;
     var ctx = myCanvas.getContext("2d");
+    let vertex = document.getElementById('myCanvas').getBoundingClientRect();
+    var lineWidth = 50
+    var lineColor = "black"
+    let painting = false
     ctx.lineCap = "round";
     ctx.lineWidth = 50;
 
-    myCanvas.addEventListener("mousedown", function (e) {
-      isDown = true;
-      ctx.beginPath();
-      var canvasX = e.pageX - myCanvas.offsetLeft;
-      var canvasY = e.pageY - myCanvas.offsetTop;
-      ctx.moveTo(canvasX, canvasY);
-    });
-    myCanvas.addEventListener("mousemove", function (e) {
-      var canvasX;
-      var canvasY;
-      if (isDown !== false) {
-        canvasX = e.pageX - myCanvas.offsetLeft;
-        canvasY = e.pageY - myCanvas.offsetTop;
-        ctx.lineTo(canvasX, canvasY);
-        ctx.strokeStyle = curColor;
-        ctx.stroke();
-      }
-    })
-    myCanvas.addEventListener("mousemove", function (e) {
-      var canvasX;
-      var canvasY;
-      if (isDown !== false) {
-        canvasX = e.pageX - myCanvas.offsetLeft;
-        canvasY = e.pageY - myCanvas.offsetTop;
-        ctx.lineTo(canvasX, canvasY);
-        ctx.strokeStyle = curColor;
-        ctx.stroke();
-      }
-    })
+    myCanvas.onmousedown = e => {
+      painting = true
+      const event = e || window.event
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      const x = event.offsetX
+      const y = event.offsetY
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineWidth = lineWidth
+      ctx.strokeStyle = lineColor
+    }
 
-    myCanvas.addEventListener("mouseup", function (e) {
-      isDown = false;
-      ctx.closePath();
-    })
+    myCanvas.onmousemove = e => {
+      if (!painting) {
+        return
+      }
+      const event = e || window.event
+      const x = event.offsetX
+      const y = event.offsetY
+      ctx.lineTo(x, y)
+      ctx.stroke()
+    }
 
+    myCanvas.onmouseup = () => {
+      if (!painting) {
+        return false
+      }
+      painting = false
+      ctx.closePath()
+    }
+
+    myCanvas.onmouseleave = () => {
+      if (!painting) {
+        return false
+      }
+      painting = false
+      ctx.closePath()
+    }
+
+    myCanvas.ontouchstart = e => {
+      console.log(e.touches)
+      painting = true
+      const event = e.touches[0]
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      let x = event.clientX-vertex.left;
+      let y = event.clientY-vertex.top;
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineWidth = lineWidth
+      ctx.strokeStyle = lineColor
+    }
+
+    myCanvas.ontouchmove = e => {
+      if (!painting) {
+        return
+      }
+      const event = e.touches[0]
+      let x = event.clientX-vertex.left;
+      let y = event.clientY-vertex.top;
+      ctx.lineTo(x, y)
+      ctx.stroke()
+    }
+
+    myCanvas.ontouchend = () => {
+      if (!painting) {
+        return false
+      }
+      painting = false
+      ctx.closePath()
+    }
+
+    ontouchcancel = () => {
+      if (!painting) {
+        return false
+      }
+      painting = false
+      ctx.closePath()
+    }
     var clear = document.getElementById("remove");
     clear.addEventListener("click", function () {
       let ctx2 = myCanvas.getContext("2d");
@@ -122,13 +177,18 @@
         }
       }
       var image_num = tf.tensor(img, [1, 28, 28, 1]);
-      var result = predict(image_num, "AI给出的结果是：").then();
+      try{
+        var result = predict(image_num, "AI觉得这个是：").then();
+      }catch(err) {
+        alert("AI模型还没有准备好呢")
+      }
     })
   </script>
 </div>
 </body>
 
 <footer>
+  <a href="https://github.com/2N2223/Digit-Recognition-JKD">开源地址</a>
   <p>参考</p>
   <a href="https://github.com/yuanzhoulvpi2017/classdigits_inter/blob/main/templates/index.html">GitHub</a>
 </footer>
