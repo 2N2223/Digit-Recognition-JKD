@@ -9,8 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0/dist/tf.min.js"></script>
   <script>
     var loadmodel = (async function() {
-      // window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/Python/JS_model/model.json');
-      window.loadmodel = await tf.loadLayersModel('https://teacher.solid.things.ac.cn:7243/private/exp/web/2021k8009907042/code/Web/Python/JS_model/model.json');
+      window.loadmodel = await tf.loadLayersModel('https://raw.githubusercontent.com/2N2223/Digit-Recognition-JKD/main/Python/JS_model/model.json');
+      // window.loadmodel = await tf.loadLayersModel('https://teacher.solid.things.ac.cn:7243/private/exp/web/2021k8009907042/code/Web/Python/JS_model/model.json');
       console.log('model loaded')
       return loadmodel;
     })
